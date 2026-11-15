@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <header>
+            <h1>Student Management System</h1>
+            <p>Manage student records easily</p>
+        </header>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="message">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <section class="form-section">
+
+            <h2 id="form-title">Add New Student</h2>
+
+            <form action="{{ url_for('save_student') }}" method="POST">
+
+                <input type="hidden" name="id" id="student-id">
+
+                <label>Student Name</label>
+                <input type="text" name="name" id="name"
+                       placeholder="Enter student name" required>
+
+                <label>Roll Number</label>
+                <input type="text" name="roll_number" id="roll_number"
+                       placeholder="Enter roll number" required>
+
+                <label>Email</label>
+                <input type="email" name="email" id="email"
+                       placeholder="Enter email address" required>
+
+                <label>Course</label>
+                <input type="text" name="course" id="course"
+                       placeholder="Enter course" required>
+
+                <button type="submit" id="submit-button">
+                    Add Student
+                </button>
+
+                <button type="button" id="cancel-button"
+                        onclick="resetForm()" hidden>
+                    Cancel Edit
+                </button>
+
+            </form>
+
+        </section>
+
+        <section class="table-section">
+
+            <h2>Student Records</h2>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Roll Number</th>
+                        <th>Email</th>
+                        <th>Course</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for student in students %}
+
+                    <tr>
+                        <td>{{ student.id }}</td>
+                        <td>{{ student.name }}</td>
+                        <td>{{ student.roll_number }}</td>
+                        <td>{{ student.email }}</td>
+                        <td>{{ student.course }}</td>
+
+                        <td>
+                            <button type="button" class="edit-button"
+                                data-id="{{ student.id }}"
+                                data-name="{{ student.name }}"
+                                data-roll="{{ student.roll_number }}"
+                                data-email="{{ student.email }}"
+                                data-course="{{ student.course }}"
+                                onclick="editStudent(this)">
+                                Edit
+                            </button>
+
+                            <form action="{{ url_for('delete_student', student_id=student.id) }}"
+                                  method="POST" class="delete-form">
+
+                                <button type="submit" class="delete-button">
+                                    Delete
+                                </button>
+
+                            </form>
+                        </td>
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="6">No student records found.</td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+    </div>
+
+    <script>
+        function editStudent(button) {
+
+            document.getElementById("student-id").value =
+                button.dataset.id;
+
+            document.getElementById("name").value =
+                button.dataset.name;
+
+            document.getElementById("roll_number").value =
+                button.dataset.roll;
+
+            document.getElementById("email").value =
+                button.dataset.email;
+
+            document.getElementById("course").value =
+                button.dataset.course;
+
+            document.getElementById("form-title").innerText =
+                "Update Student";
+
+            document.getElementById("submit-button").innerText =
+                "Update Student";
+
+            document.getElementById("cancel-button").hidden = false;
+
+            window.scrollTo({top: 0, behavior: "smooth"});
+        }
+
+        function resetForm() {
+
+            document.querySelector("form").reset();
+
+            document.getElementById("student-id").value = "";
+
+            document.getElementById("form-title").innerText =
+                "Add New Student";
+
+            document.getElementById("submit-button").innerText =
+                "Add Student";
+
+            document.getElementById("cancel-button").hidden = true;
+        }
+    </script>
+
+</body>
+</html>
